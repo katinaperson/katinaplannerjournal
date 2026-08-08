@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="KP Journal">
 <meta name="mobile-web-app-capable" content="yes">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&family=Pinyon+Script&family=Dancing+Script:wght@400;600&family=Sacramento&family=Great+Vibes&display=swap" rel="stylesheet">
 <style>
 :root{
   --white:#FFFFFF;--bg:#F8F6F3;--card:#FFFFFF;--border:#E8E2DA;--border-lt:#F0EBE4;
@@ -613,6 +613,11 @@ function renderPillarSections(){
       <button class="rte-btn" onclick="fmt('insertOrderedList')" title="Numbered list">1. List</button>
       <div class="rte-divider"></div>
       <button class="rte-btn" onclick="fmtHighlight()" title="Highlight">Highlight</button>
+      <div class="rte-divider"></div>
+      <button class="rte-btn" onclick="fmtFont('Dancing Script')" title="Dancing Script" style="font-family:'Dancing Script',cursive;font-size:1rem">Dancing</button>
+      <button class="rte-btn" onclick="fmtFont('Pinyon Script')" title="Pinyon Script" style="font-family:'Pinyon Script',cursive;font-size:1rem">Pinyon</button>
+      <button class="rte-btn" onclick="fmtFont('Sacramento')" title="Sacramento" style="font-family:'Sacramento',cursive;font-size:1rem">Sacramento</button>
+      <button class="rte-btn" onclick="fmtFont('Great Vibes')" title="Great Vibes" style="font-family:'Great Vibes',cursive;font-size:1rem">Great Vibes</button>
       <button class="rte-btn" onclick="fmt('removeFormat')" title="Clear formatting">Clear</button>`;
     const editor=document.createElement('div');
     editor.className='rte-editor';
@@ -627,9 +632,29 @@ function renderPillarSections(){
 }
 
 function fmt(cmd){document.execCommand(cmd,false,null);}
+function fmtFont(fontName){
+  const sel=window.getSelection();
+  if(!sel||sel.rangeCount===0||sel.toString().length===0){toast('Select some text first');return;}
+  const range=sel.getRangeAt(0);
+  const span=document.createElement('span');
+  span.style.fontFamily="'"+fontName+"', cursive";
+  span.style.fontSize='1.3em';
+  try{range.surroundContents(span);}
+  catch(e){const frag=range.extractContents();span.appendChild(frag);range.insertNode(span);}
+  sel.removeAllRanges();
+}
 function fmtHighlight(){
   const sel=window.getSelection();
-  if(sel&&sel.toString().length>0){document.execCommand('insertHTML',false,`<mark>${sel.toString()}</mark>`);}
+  if(!sel||sel.rangeCount===0||sel.toString().length===0){toast('Select some text first');return;}
+  const range=sel.getRangeAt(0);
+  const mark=document.createElement('mark');
+  try{range.surroundContents(mark);}
+  catch(e){
+    const frag=range.extractContents();
+    mark.appendChild(frag);
+    range.insertNode(mark);
+  }
+  sel.removeAllRanges();
 }
 
 /* SAVE ENTRY */
