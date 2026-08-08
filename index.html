@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="KP Journal">
 <meta name="mobile-web-app-capable" content="yes">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&family=Pinyon+Script&family=Dancing+Script:wght@400;600&family=Sacramento&family=Great+Vibes&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --white:#FFFFFF;--bg:#F8F6F3;--card:#FFFFFF;--border:#E8E2DA;--border-lt:#F0EBE4;
@@ -612,15 +612,17 @@ function renderPillarSections(){
       <button class="rte-btn" onclick="fmt('insertUnorderedList')" title="Bullet list">• List</button>
       <button class="rte-btn" onclick="fmt('insertOrderedList')" title="Numbered list">1. List</button>
       <div class="rte-divider"></div>
-      <button class="rte-btn" onclick="fmtHighlight()" title="Highlight">Highlight</button>
-      <div class="rte-divider"></div>
-      <select class="rte-btn" onchange="fmtFont(this.value);this.selectedIndex=0" style="cursor:pointer;padding:3px 6px">
-        <option value="" disabled selected>Cursive Fonts</option>
-        <option value="Dancing Script" style="font-family:'Dancing Script',cursive">Dancing Script</option>
-        <option value="Pinyon Script" style="font-family:'Pinyon Script',cursive">Pinyon Script</option>
-        <option value="Sacramento" style="font-family:'Sacramento',cursive">Sacramento</option>
-        <option value="Great Vibes" style="font-family:'Great Vibes',cursive">Great Vibes</option>
+      <button class="rte-btn" onclick="fmtHighlight('rgba(196,135,154,0.3)')" title="Rose Highlight">Highlight</button>
+      <select class="rte-btn" onchange="fmtHighlight(this.value);this.selectedIndex=0" style="cursor:pointer;padding:3px 6px">
+        <option value="" disabled selected>Highlight Color</option>
+        <option value="rgba(255,235,59,0.4)">Yellow</option>
+        <option value="rgba(196,135,154,0.3)">Rose</option>
+        <option value="rgba(179,136,255,0.35)">Purple</option>
+        <option value="rgba(105,240,174,0.35)">Green</option>
+        <option value="rgba(100,181,246,0.35)">Blue</option>
       </select>
+      <div class="rte-divider"></div>
+      <button class="rte-btn" onclick="fmtFont('Dancing Script')" title="Dancing Script" style="font-family:'Dancing Script',cursive">Dancing Script</button>
       <button class="rte-btn" onclick="fmt('removeFormat')" title="Clear formatting">Clear</button>`;
     const editor=document.createElement('div');
     editor.className='rte-editor';
@@ -635,28 +637,58 @@ function renderPillarSections(){
 }
 
 function fmt(cmd){document.execCommand(cmd,false,null);}
-function fmtFont(fontName){
+function fmtSize(size){
+  if(!size)return;
   const sel=window.getSelection();
-  if(!sel||sel.rangeCount===0||sel.toString().length===0){toast('Select some text first');return;}
-  const range=sel.getRangeAt(0);
-  const span=document.createElement('span');
-  span.style.fontFamily="'"+fontName+"', cursive";
-  span.style.fontSize='1.3em';
-  try{range.surroundContents(span);}
-  catch(e){const frag=range.extractContents();span.appendChild(frag);range.insertNode(span);}
-  sel.removeAllRanges();
+  if(sel&&sel.rangeCount>0&&sel.toString().length>0){
+    const range=sel.getRangeAt(0);
+    const span=document.createElement('span');
+    span.style.fontSize=size;
+    try{range.surroundContents(span);}
+    catch(e){const frag=range.extractContents();span.appendChild(frag);range.insertNode(span);}
+    sel.removeAllRanges();
+  } else {
+    document.execCommand('fontSize',false,'7');
+    setTimeout(()=>{
+      const active=document.querySelector('.rte-editor:focus');
+      if(active){active.querySelectorAll('font[size="7"]').forEach(f=>{f.removeAttribute('size');f.style.fontSize=size;});}
+    },0);
+  }
 }
-function fmtHighlight(){
+function fmtFont(fontName){
+  if(!fontName)return;
+  const sel=window.getSelection();
+  if(sel&&sel.rangeCount>0&&sel.toString().length>0){
+    const range=sel.getRangeAt(0);
+    const span=document.createElement('span');
+    span.style.fontFamily="'"+fontName+"', cursive";
+    try{range.surroundContents(span);}
+    catch(e){const frag=range.extractContents();span.appendChild(frag);range.insertNode(span);}
+    sel.removeAllRanges();
+  } else {
+    document.execCommand('fontName',false,fontName);
+    setTimeout(()=>{
+      const active=document.querySelector('.rte-editor:focus');
+      if(active){
+        active.querySelectorAll('font').forEach(f=>{
+          if(f.face===fontName||f.getAttribute('face')===fontName){
+            f.style.fontFamily="'"+fontName+"', cursive";
+          }
+        });
+      }
+    },0);
+    toast('Now typing in '+fontName+' — pick Clear to return to normal');
+  }
+}
+function fmtHighlight(color){
+  color=color||'rgba(196,135,154,0.3)';
   const sel=window.getSelection();
   if(!sel||sel.rangeCount===0||sel.toString().length===0){toast('Select some text first');return;}
   const range=sel.getRangeAt(0);
   const mark=document.createElement('mark');
+  mark.style.background=color;mark.style.borderRadius='2px';mark.style.padding='0 2px';
   try{range.surroundContents(mark);}
-  catch(e){
-    const frag=range.extractContents();
-    mark.appendChild(frag);
-    range.insertNode(mark);
-  }
+  catch(e){const frag=range.extractContents();mark.appendChild(frag);range.insertNode(mark);}
   sel.removeAllRanges();
 }
 
