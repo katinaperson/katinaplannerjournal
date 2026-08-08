@@ -614,10 +614,13 @@ function renderPillarSections(){
       <div class="rte-divider"></div>
       <button class="rte-btn" onclick="fmtHighlight()" title="Highlight">Highlight</button>
       <div class="rte-divider"></div>
-      <button class="rte-btn" onclick="fmtFont('Dancing Script')" title="Dancing Script" style="font-family:'Dancing Script',cursive;font-size:1rem">Dancing</button>
-      <button class="rte-btn" onclick="fmtFont('Pinyon Script')" title="Pinyon Script" style="font-family:'Pinyon Script',cursive;font-size:1rem">Pinyon</button>
-      <button class="rte-btn" onclick="fmtFont('Sacramento')" title="Sacramento" style="font-family:'Sacramento',cursive;font-size:1rem">Sacramento</button>
-      <button class="rte-btn" onclick="fmtFont('Great Vibes')" title="Great Vibes" style="font-family:'Great Vibes',cursive;font-size:1rem">Great Vibes</button>
+      <select class="rte-btn" onchange="fmtFont(this.value);this.selectedIndex=0" style="cursor:pointer;padding:3px 6px">
+        <option value="" disabled selected>Cursive Fonts</option>
+        <option value="Dancing Script" style="font-family:'Dancing Script',cursive">Dancing Script</option>
+        <option value="Pinyon Script" style="font-family:'Pinyon Script',cursive">Pinyon Script</option>
+        <option value="Sacramento" style="font-family:'Sacramento',cursive">Sacramento</option>
+        <option value="Great Vibes" style="font-family:'Great Vibes',cursive">Great Vibes</option>
+      </select>
       <button class="rte-btn" onclick="fmt('removeFormat')" title="Clear formatting">Clear</button>`;
     const editor=document.createElement('div');
     editor.className='rte-editor';
