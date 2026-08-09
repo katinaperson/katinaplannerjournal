@@ -2,7 +2,7 @@
   "name": "Planner Journal",
   "short_name": "Planner",
   "description": "Your personal planner and journal",
-  "start_url": "/planner/",
+  "start_url": "/myplannerjournal/",
   "display": "standalone",
   "background_color": "#1A1614",
   "theme_color": "#1A1614",
@@ -20,5 +20,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "scope": "/myplannerjournal/"
 }
